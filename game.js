@@ -57,11 +57,19 @@ scene("game", () => {
     ])
 
     keyDown('left', () => {
+        player.flipX(true)
         player.move(-120,0)
     })
     
     keyDown('right', () => {
+        player.flipX(false)
         player.move(120,0)
+    })
+
+    keyPress('space', () => {
+        if(player.grounded()){
+            player.jump(390)
+        }
     })
 })
 
