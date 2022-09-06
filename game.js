@@ -55,6 +55,14 @@ scene("game", () => {
         pos(60,0),
         origin('bot'),
     ])
+
+    keyDown('left', () => {
+        player.move(-120,0)
+    })
+    
+    keyDown('right', () => {
+        player.move(120,0)
+    })
 })
 
 go("game")
