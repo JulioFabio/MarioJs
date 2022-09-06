@@ -7,7 +7,7 @@ kaboom({
 
 loadRoot("https://i.imgur.com/")
 
-loadSprite('bloco','3e5YRQd.png')
+loadSprite('bloco','M6rwarW.png')
 
 scene("game", () => {
     layer(["bg", "obj", "ui"], "obj")
