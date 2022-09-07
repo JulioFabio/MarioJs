@@ -5,6 +5,9 @@ kaboom({
     clearColor: [0,0,0,1]
 })
 
+let isJumping = true
+let isBig = false
+
 loadRoot("https://i.imgur.com/")
 
 loadSprite('bloco','M6rwarW.png')
@@ -48,10 +51,28 @@ scene("game", () => {
 
     const gameLevel = addLevel(map, levelCfg)
 
+
+    function big(){
+        return{
+            isBig(){
+                return isBig
+            },
+            smallify(){
+                this.scale = vec2(1)
+                isBig = false
+            },
+            biggify(){
+                this.scale = vec2(1.5)
+                isBig = true
+            }
+        }
+    }
+
     const player = add([
         sprite('mario'),
         solid(),
         body(),
+        big(),
         pos(60,0),
         origin('bot'),
     ])
@@ -69,7 +90,41 @@ scene("game", () => {
     keyPress('space', () => {
         if(player.grounded()){
             player.jump(390)
+            isJumping = true
         }
+    })
+
+    action('dangerous',(obj) => {
+        obj.move(-20,0)
+    })
+
+    player.action(() => {
+        if(player.grounded()){
+            isJumping = false
+        }
+    })
+
+    player.on('headbutt', (obj) => {
+        if(obj.is('moeda-surpresa')){
+            gameLevel.spawn('$', obj.gridPos.sub(0,1))
+            destroy(obj)
+            gameLevel.spawn('{', obj.gridPos.sub(0,0))
+        }
+
+        if(obj.is('cogumelo-surpresa')){
+            gameLevel.spawn('#', obj.gridPos.sub(0,1))
+            destroy(obj)
+            gameLevel.spawn('{', obj.gridPos.sub(0,0))
+        }
+    })
+
+    action('cogumelo', (obj) => {
+        obj.move(40,0)
+    })
+
+    player.collides('cogumelo',(obj) => {
+        destroy(obj)
+        player.biggify()
     })
 })
 
