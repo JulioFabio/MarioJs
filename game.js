@@ -15,8 +15,21 @@ loadSprite('goomba','KPO3fR9.png')
 loadSprite('surpresa','gesQ1KP.png')
 loadSprite('unboxed','bdrLpi6.png')
 loadSprite('moeda','wbKxhcd.png')
-loadSprite('mario','Wb1qfhK.png')
 loadSprite('cogumelo','0wMd92p.png')
+
+loadSprite('mario', 'OzrEnBy.png',{
+    sliceX: 3.9,
+    anims: {
+        idle: {
+            from: 0,
+            to: 0,
+        },
+        move: {
+            from: 1,
+            to: 2,
+        }
+    }
+})
 
 scene("game", ({ score }) => {
     layer(["bg", "obj", "ui"], "obj")
@@ -77,12 +90,18 @@ scene("game", ({ score }) => {
     }
 
     const player = add([
-        sprite('mario'),
+        sprite('mario', {
+            animsSpeed: 0.1,
+            frame: 0
+        }), 
         solid(),
         body(),
         big(),
         pos(60,0),
         origin('bot'),
+        {
+            speed: 120
+        }
     ])
 
     keyDown('left', () => {
@@ -101,6 +120,27 @@ scene("game", ({ score }) => {
             isJumping = true
         }
     })
+//Animar o Mário
+    keyPress('left', () => {
+        player.flipX(true)
+        player.play('move')
+    })
+
+    keyPress('right', () => {
+        player.flipX(false)
+        player.play('move')
+    })
+    /////////////////////////////////
+
+    // Animar Parado //
+    keyRelease('left', () => {
+        player.play('idle')
+    })
+
+    keyRelease('right', () => {
+        player.play('idle')
+    })
+    //////////////////////////////////
 
     action('dangerous',(obj) => {
         obj.move(-20,0)
