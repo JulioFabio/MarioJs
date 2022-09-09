@@ -18,7 +18,7 @@ loadSprite('moeda','wbKxhcd.png')
 loadSprite('mario','Wb1qfhK.png')
 loadSprite('cogumelo','0wMd92p.png')
 
-scene("game", () => {
+scene("game", ({ score }) => {
     layer(["bg", "obj", "ui"], "obj")
 
     const map = [
@@ -51,6 +51,14 @@ scene("game", () => {
 
     const gameLevel = addLevel(map, levelCfg)
 
+    const scoreLabel = add([
+        text('Moedas:' + score, 10),
+        pos(12,5),
+        layer('ui'),
+        {
+            value: score
+        }
+    ])
 
     function big(){
         return{
@@ -126,6 +134,29 @@ scene("game", () => {
         destroy(obj)
         player.biggify()
     })
+
+    player.collides('dangerous', (obj) => {
+        if(isJumping){
+            destroy(obj)
+        }else{
+            if(isBig){
+                player.smallify()
+            }else{
+                go("lose", ({score: scoreLabel.value}))
+            }
+        }
+    })
+
+    player.collides('moeda', (obj) =>{
+        destroy(obj)
+        scoreLabel.value++
+        scoreLabel.text = 'Moedas: ' +scoreLabel.value
+    })
 })
 
-go("game")
+scene("lose", ({score}) => {
+    add([ text('Voce Morreu', 18), origin('center'), pos(width()/2, height()/2)])
+    add([ text('score: ' +score, 17), origin('center'), pos(width()/1.5, height()/1.5) ])
+})
+
+go("game", ({ score: 0}))
