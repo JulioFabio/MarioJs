@@ -261,6 +261,9 @@ scene("game", ({ level, score, big, }) => {
 scene("lose", ({score}) => {
     add([ text('Voce Morreu', 18), origin('center'), pos(width()/2, height()/2)])
     add([ text('score: ' +score, 17), origin('center'), pos(width()/1.5, height()/1.5) ])
+    keyPress('space', () => {
+        go("game", {level:0, score:0, big: isBig})
+    })
 })
 
 go("game", ({ level: 0, score: 0, big: isBig }))
