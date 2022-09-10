@@ -31,23 +31,61 @@ loadSprite('mario', 'OzrEnBy.png',{
     }
 })
 
-scene("game", ({ score }) => {
+loadSprite('tijolo', 'pogC9x5.png')//tijolo
+loadSprite('tubo-top-left', 'ReTPiWY.png')//tubo esquerdo
+loadSprite('tubo-top-right', 'hj2GK4n.png')//tubo direito
+loadSprite('tubo-bottom-left', 'c1cYSbt.png')//tubo parte de baixo esquerda
+loadSprite('tubo-bottom-right', 'nqQ79eI.png')//tubo parte de baixo direita
+
+loadSprite('blue-bloco', 'fVscIbn.png')//bloco azul
+loadSprite('blue-tijolo', '3e5YRQd.png')//tijolo azul
+loadSprite('blue-aco', 'gqVoI2b.png')//aço azul
+loadSprite('blue-goomba', 'SvV4ueD.png')//goomba azul
+
+scene("game", ({ level, score, big, }) => {
     layer(["bg", "obj", "ui"], "obj")
 
-    const map = [
-        '=                                   =',
-        '=                                   =',
-        '=                                   =',
-        '=                                   =',
-        '=                                   =',
-        '=                                   =',
-        '=               {{{{{               =',
-        '=                                   =',
-        '=         %{%{*                     =',
-        '=                                   =',
-        '=                                   =',
-        '=             ^       ^      ^      =',
-        '=====================================',
+    const maps = [
+        [
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                                    =',
+            '=                  {{{{{             =',
+            '=                                    =',
+            '=                                    =',
+            '=        %{%{*                       =',
+            '=                                    =',
+            '=                                  -+=',
+            '=               ^    ^  ^          ()=',
+            '======================================',
+        ],
+        [
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                                    /',
+            '/                       x  x         /',
+            '/                    x  x  x  x    -+/',
+            '/             ^ ^  ^ x  x  x  x    ()/',
+            '//////////////////////////////////////',
+        ],
     ]
 
     const levelCfg = {
@@ -60,9 +98,19 @@ scene("game", ({ score }) => {
         '{': [sprite('unboxed'), solid()],
         '^': [sprite('goomba'), 'dangerous'],
         '#': [sprite('cogumelo'), 'cogumelo',body()],
+
+        '~': [sprite('tijolo'), solid()],
+        '(': [sprite('tubo-bottom-left'), solid(), scale(0.5)],
+        ')': [sprite('tubo-bottom-right'), solid(), scale(0.5)],
+        '-': [sprite('tubo-top-left'), solid(), 'tubo', scale(0.5)],
+        '+': [sprite('tubo-top-right'), solid(), 'tubo', scale(0.5)],
+        '!': [sprite('blue-bloco'), solid(), scale(0.5)],
+        '/': [sprite('blue-tijolo'), solid(), scale(0.5)],
+        'z': [sprite('blue-goomba'), body(), 'dangerous', scale(0.5)],
+        'x': [sprite('blue-aco'), solid(), scale(0.5)],
     }
 
-    const gameLevel = addLevel(map, levelCfg)
+    const gameLevel = addLevel(maps[level], levelCfg)
 
     const scoreLabel = add([
         text('Moedas:' + score, 10),
@@ -72,6 +120,8 @@ scene("game", ({ score }) => {
             value: score
         }
     ])
+
+    add([text('Level: ' +parseInt(level + 1), 10), pos(12,30)])
 
     function big(){
         return{
@@ -104,6 +154,10 @@ scene("game", ({ score }) => {
         }
     ])
 
+    if(isBig){
+        player.biggify
+    }
+
     keyDown('left', () => {
         player.flipX(true)
         player.move(-120,0)
@@ -120,7 +174,7 @@ scene("game", ({ score }) => {
             isJumping = true
         }
     })
-//Animar o Mário
+    //Animar o Mário
     keyPress('left', () => {
         player.flipX(true)
         player.play('move')
@@ -192,6 +246,16 @@ scene("game", ({ score }) => {
         scoreLabel.value++
         scoreLabel.text = 'Moedas: ' +scoreLabel.value
     })
+
+    player.collides('tubo', () => {
+        keyPress('down', () => {
+            go("game", {
+                level: (level + 1) % maps.length,
+                score: scoreLabel.value,
+                Big:isBig
+            })
+        })
+    })
 })
 
 scene("lose", ({score}) => {
@@ -199,4 +263,4 @@ scene("lose", ({score}) => {
     add([ text('score: ' +score, 17), origin('center'), pos(width()/1.5, height()/1.5) ])
 })
 
-go("game", ({ score: 0}))
+go("game", ({ level: 0, score: 0, big: isBig }))
