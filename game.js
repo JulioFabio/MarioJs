@@ -16,6 +16,9 @@ loadSprite('surpresa','gesQ1KP.png')
 loadSprite('unboxed','bdrLpi6.png')
 loadSprite('moeda','wbKxhcd.png')
 loadSprite('cogumelo','0wMd92p.png')
+loadSprite('nuvem', 'kv7jDG5.png')
+loadSprite('bloco-invisivel', '4r7H2xm.png')
+
 
 loadSprite('mario', 'OzrEnBy.png',{
     sliceX: 3.9,
@@ -47,10 +50,10 @@ scene("game", ({ level, score, big, }) => {
 
     const maps = [
         [
+            '=      m                             =',
             '=                                    =',
             '=                                    =',
-            '=                                    =',
-            '=                                    =',
+            '=                                m   =',
             '=                                    =',
             '=                                    =',
             '=                                    =',
@@ -108,6 +111,7 @@ scene("game", ({ level, score, big, }) => {
         '/': [sprite('blue-tijolo'), solid(), scale(0.5)],
         'z': [sprite('blue-goomba'), body(), 'dangerous', scale(0.5)],
         'x': [sprite('blue-aco'), solid(), scale(0.5)],
+        'm': [sprite('nuvem'), 'flyc', scale(0.5)],
     }
 
     const gameLevel = addLevel(maps[level], levelCfg)
@@ -147,7 +151,7 @@ scene("game", ({ level, score, big, }) => {
         solid(),
         body(),
         big(),
-        pos(60,0),
+        pos(60,350),
         origin('bot'),
         {
             speed: 120
@@ -197,6 +201,10 @@ scene("game", ({ level, score, big, }) => {
     //////////////////////////////////
 
     action('dangerous',(obj) => {
+        obj.move(-20,0)
+    })
+
+    action('flyc',(obj) => {
         obj.move(-20,0)
     })
 
